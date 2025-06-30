@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>PathLib</RootNamespace>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        
+        <!-- NuGet Package Properties -->
+        <PackageId>CodeWine.PathLib.Sharp</PackageId>
+        <Version>1.0.0-preview</Version>
+        <Authors>CodeWine</Authors>
+        <Company>CodeWine</Company>
+        <Description>A C# implementation of Python's pathlib functionality, providing object-oriented filesystem path operations.</Description>
+        <Summary>Object-oriented filesystem path operations for .NET, inspired by Python's pathlib.</Summary>
+        <PackageTags>path;filesystem;pathlib;file;directory;crossplatform</PackageTags>
+        <PackageProjectUrl>https://github.com/BYJRK/PathLib.Sharp</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/BYJRK/PathLib.Sharp</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Copyright>Copyright (c) 2025 CodeWine</Copyright>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

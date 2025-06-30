@@ -2,7 +2,7 @@
 
 ## 概述
 
-PathLib.Sharp 是一个C#库，它模仿了Python pathlib模块的功能和API设计。它提供了一种面向对象的方式来处理文件系统路径，比传统的字符串操作更加直观和安全。
+PathLib.Sharp 是一个 C#库，它模仿了 Python pathlib 模块的功能和 API 设计。它提供了一种面向对象的方式来处理文件系统路径，比传统的字符串操作更加直观和安全。
 
 ## 主要特性
 
@@ -83,10 +83,10 @@ var path = new SharpPath("documents", "projects", "myfile.txt");
 Console.WriteLine(path); // documents\projects\myfile.txt (Windows)
 
 // 路径属性
-Console.WriteLine($"名称: {path.Name}");           // myfile.txt
-Console.WriteLine($"主名: {path.Stem}");           // myfile
-Console.WriteLine($"扩展名: {path.Suffix}");       // .txt
-Console.WriteLine($"父目录: {path.Parent}");       // documents\projects
+Console.WriteLine($"名称：{path.Name}");           // myfile.txt
+Console.WriteLine($"主名：{path.Stem}");           // myfile
+Console.WriteLine($"扩展名：{path.Suffix}");       // .txt
+Console.WriteLine($"父目录：{path.Parent}");       // documents\projects
 ```
 
 ### 路径连接
@@ -120,7 +120,7 @@ string content = textFile.ReadText();
 // 检查文件
 if (textFile.Exists && textFile.IsFile)
 {
-    Console.WriteLine($"文件大小: {textFile.Stat()?.Length} 字节");
+    Console.WriteLine($"文件大小：{textFile.Stat()?.Length} 字节");
 }
 ```
 
@@ -136,9 +136,9 @@ directory.MakeDirectory();
 foreach (var item in directory.IterateDirectory())
 {
     if (item.IsFile)
-        Console.WriteLine($"文件: {item.Name}");
+        Console.WriteLine($"文件：{item.Name}");
     else if (item.IsDirectory)
-        Console.WriteLine($"目录: {item.Name}");
+        Console.WriteLine($"目录：{item.Name}");
 }
 
 // 模式匹配
@@ -148,7 +148,7 @@ var txtFiles = directory.Glob("*.txt");
 ### 高级功能
 
 ```csharp
-// 递归搜索所有Python文件
+// 递归搜索所有 Python 文件
 var projectDir = new SharpPath("my_project");
 var pythonFiles = projectDir.Glob("**/*.py");
 
@@ -168,7 +168,7 @@ tempFile.Unlink(missingOk: true); // 不存在时不会抛出异常
 - ✅ Linux (.NET 8.0+)
 - ✅ macOS (.NET 8.0+)
 
-## 与Python pathlib的对比
+## 与 Python pathlib 的对比
 
 | Python pathlib | PathLib.Sharp | 功能说明 |
 |----------------|---------------|----------|
@@ -196,26 +196,26 @@ dotnet build
 # 运行测试
 dotnet test
 
-# 打包NuGet包
+# 打包 NuGet 包
 dotnet pack
 ```
 
 ## 测试覆盖率
 
-本项目包含61个测试用例，覆盖以下方面：
+本项目包含 61 个测试用例，覆盖以下方面：
 
-- ✅ 构造函数测试（4个测试）
-- ✅ 属性访问测试（11个测试）  
-- ✅ 操作符重载测试（4个测试）
-- ✅ 路径操作测试（6个测试）
-- ✅ 文件系统查询测试（4个测试）
-- ✅ 文件操作测试（6个测试）
-- ✅ 目录操作测试（6个测试）
-- ✅ 文件系统操作测试（5个测试）
-- ✅ 静态方法测试（2个测试）
-- ✅ 相等性和比较测试（5个测试）
-- ✅ 通配符匹配测试（1个测试）
-- ✅ 错误处理和边界情况测试（7个测试）
+- ✅ 构造函数测试（4 个测试）
+- ✅ 属性访问测试（11 个测试）  
+- ✅ 操作符重载测试（4 个测试）
+- ✅ 路径操作测试（6 个测试）
+- ✅ 文件系统查询测试（4 个测试）
+- ✅ 文件操作测试（6 个测试）
+- ✅ 目录操作测试（6 个测试）
+- ✅ 文件系统操作测试（5 个测试）
+- ✅ 静态方法测试（2 个测试）
+- ✅ 相等性和比较测试（5 个测试）
+- ✅ 通配符匹配测试（1 个测试）
+- ✅ 错误处理和边界情况测试（7 个测试）
 
 ## 许可证
 
@@ -223,11 +223,11 @@ dotnet pack
 
 ## 贡献
 
-欢迎贡献代码！请提交Pull Request或创建Issue来报告bug或提出功能建议。
+欢迎贡献代码！请提交 Pull Request 或创建 Issue 来报告 bug 或提出功能建议。
 
 ## 注意事项
 
 - 路径操作遵循当前操作系统的约定
-- Windows上的路径比较不区分大小写，Unix/Linux上区分大小写
+- Windows 上的路径比较不区分大小写，Unix/Linux 上区分大小写
 - 符号链接操作需要适当的系统权限
 - 某些操作可能因为文件系统权限而失败，请适当处理异常

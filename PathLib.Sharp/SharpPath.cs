@@ -9,9 +9,9 @@ namespace PathLib;
 public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
 {
     private readonly string _path;
-    
+
     #region Constructors
-    
+
     /// <summary>
     /// Initialize a new SharpPath with the given path segments
     /// </summary>
@@ -27,7 +27,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
             _path = NormalizePath(Path.Combine(pathSegments));
         }
     }
-    
+
     /// <summary>
     /// Initialize a new SharpPath from another SharpPath
     /// </summary>
@@ -36,11 +36,11 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         _path = other?._path ?? ".";
     }
-    
+
     #endregion
-    
+
     #region Properties
-    
+
     /// <summary>
     /// The path parts as a read-only list
     /// </summary>
@@ -50,48 +50,54 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
         {
             if (_path == "." || string.IsNullOrEmpty(_path))
                 return new[] { "." };
-                
+
             var parts = new List<string>();
             var root = Path.GetPathRoot(_path);
-            
+
             if (!string.IsNullOrEmpty(root))
             {
                 parts.Add(root);
-                
+
                 // Get the part after root
                 var relativePart = _path.Substring(root.Length);
                 if (!string.IsNullOrEmpty(relativePart))
                 {
-                    parts.AddRange(relativePart.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                        .Where(p => !string.IsNullOrEmpty(p)));
+                    parts.AddRange(
+                        relativePart
+                            .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                            .Where(p => !string.IsNullOrEmpty(p))
+                    );
                 }
             }
             else
             {
                 // Relative path
-                parts.AddRange(_path.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                    .Where(p => !string.IsNullOrEmpty(p)));
+                parts.AddRange(
+                    _path
+                        .Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                        .Where(p => !string.IsNullOrEmpty(p))
+                );
             }
-            
+
             return parts.AsReadOnly();
         }
     }
-    
+
     /// <summary>
     /// The final component of the path
     /// </summary>
     public string Name => Path.GetFileName(_path) ?? "";
-    
+
     /// <summary>
     /// The final component without its suffix
     /// </summary>
     public string Stem => Path.GetFileNameWithoutExtension(_path) ?? "";
-    
+
     /// <summary>
     /// The file extension of the final component
     /// </summary>
     public string Suffix => Path.GetExtension(_path) ?? "";
-    
+
     /// <summary>
     /// All suffixes of the final component
     /// </summary>
@@ -102,7 +108,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
             var name = Name;
             var suffixes = new List<string>();
             var dotIndex = name.IndexOf('.');
-            
+
             while (dotIndex >= 0 && dotIndex < name.Length - 1)
             {
                 var suffix = name.Substring(dotIndex);
@@ -114,16 +120,16 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
                 suffixes.Add(suffix);
                 dotIndex = name.IndexOf('.', dotIndex + suffix.Length);
             }
-            
+
             return suffixes.AsReadOnly();
         }
     }
-    
+
     /// <summary>
     /// The logical parent of the path
     /// </summary>
     public SharpPath Parent => new SharpPath(Path.GetDirectoryName(_path) ?? _path);
-    
+
     /// <summary>
     /// Logical ancestors of the path
     /// </summary>
@@ -136,17 +142,21 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
             {
                 yield return current;
                 var next = current.Parent;
-                if (next._path == current._path) break;
+                if (next._path == current._path)
+                    break;
                 current = next;
             }
         }
     }
-    
+
     /// <summary>
     /// The drive letter or name, if any
     /// </summary>
-    public string Drive => Path.GetPathRoot(_path)?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) ?? "";
-    
+    public string Drive =>
+        Path.GetPathRoot(_path)
+            ?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+        ?? "";
+
     /// <summary>
     /// The root of the path, if any
     /// </summary>
@@ -155,8 +165,9 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
         get
         {
             var root = Path.GetPathRoot(_path);
-            if (string.IsNullOrEmpty(root)) return "";
-            
+            if (string.IsNullOrEmpty(root))
+                return "";
+
             // On Windows, return just the separator part
             if (OperatingSystem.IsWindows() && root.Length > 1)
             {
@@ -165,16 +176,16 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
             return root;
         }
     }
-    
+
     /// <summary>
     /// The concatenation of drive and root
     /// </summary>
     public string Anchor => Path.GetPathRoot(_path) ?? "";
-    
+
     #endregion
-    
+
     #region Operators
-    
+
     /// <summary>
     /// Combine paths using the / operator
     /// </summary>
@@ -182,7 +193,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return left.JoinPath(right);
     }
-    
+
     /// <summary>
     /// Combine paths using the / operator
     /// </summary>
@@ -190,7 +201,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return left.JoinPath(right._path);
     }
-    
+
     /// <summary>
     /// Implicit conversion from string
     /// </summary>
@@ -198,7 +209,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return new SharpPath(path);
     }
-    
+
     /// <summary>
     /// Implicit conversion to string
     /// </summary>
@@ -206,11 +217,11 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return path._path;
     }
-    
+
     #endregion
-    
+
     #region Path Operations
-    
+
     /// <summary>
     /// Join path segments to this path
     /// </summary>
@@ -218,19 +229,19 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         if (pathSegments == null || pathSegments.Length == 0)
             return this;
-            
+
         var segments = new string[pathSegments.Length + 1];
         segments[0] = _path;
         Array.Copy(pathSegments, 0, segments, 1, pathSegments.Length);
-        
+
         return new SharpPath(Path.Combine(segments));
     }
-    
+
     /// <summary>
     /// Return whether this path is absolute
     /// </summary>
     public bool IsAbsolute => Path.IsPathRooted(_path);
-    
+
     /// <summary>
     /// Make the path absolute
     /// </summary>
@@ -238,7 +249,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return new SharpPath(Path.GetFullPath(_path));
     }
-    
+
     /// <summary>
     /// Resolve the path (make absolute and resolve symlinks)
     /// </summary>
@@ -253,7 +264,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
             return Absolute();
         }
     }
-    
+
     /// <summary>
     /// Return a new path with the name changed
     /// </summary>
@@ -262,11 +273,11 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
         var currentName = Name;
         if (string.IsNullOrEmpty(currentName))
             throw new InvalidOperationException("Path has no name to replace");
-            
+
         var dir = Path.GetDirectoryName(_path);
         return new SharpPath(dir != null ? Path.Combine(dir, name) : name);
     }
-    
+
     /// <summary>
     /// Return a new path with the stem changed
     /// </summary>
@@ -274,7 +285,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return WithName(stem + Suffix);
     }
-    
+
     /// <summary>
     /// Return a new path with the suffix changed
     /// </summary>
@@ -282,26 +293,53 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return WithName(Stem + suffix);
     }
-    
+
     #endregion
-    
+
     #region File System Queries
-    
+
     /// <summary>
     /// Return True if the path exists
     /// </summary>
-    public bool Exists => File.Exists(_path) || Directory.Exists(_path);
-    
+    public bool Exists
+    {
+        get
+        {
+            try
+            {
+                var fileInfo = new FileInfo(_path);
+                if (fileInfo.LinkTarget != null)
+                {
+                    var target = fileInfo.ResolveLinkTarget(true);
+                    return target?.Exists ?? false;
+                }
+
+                var dirInfo = new DirectoryInfo(_path);
+                if (dirInfo.LinkTarget != null)
+                {
+                    var target = dirInfo.ResolveLinkTarget(true);
+                    return target?.Exists ?? false;
+                }
+            }
+            catch
+            {
+                // Ignore errors
+            }
+
+            return File.Exists(_path) || Directory.Exists(_path);
+        }
+    }
+
     /// <summary>
     /// Return True if the path points to a regular file
     /// </summary>
-    public bool IsFile => File.Exists(_path);
-    
+    public bool IsFile => Exists && File.Exists(_path);
+
     /// <summary>
     /// Return True if the path points to a directory
     /// </summary>
-    public bool IsDirectory => Directory.Exists(_path);
-    
+    public bool IsDirectory => Exists && Directory.Exists(_path);
+
     /// <summary>
     /// Return True if the path points to a symbolic link
     /// </summary>
@@ -311,16 +349,14 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
         {
             try
             {
-                if (IsFile)
-                {
-                    var fileInfo = new FileInfo(_path);
-                    return fileInfo.Attributes.HasFlag(FileAttributes.ReparsePoint);
-                }
-                if (IsDirectory)
-                {
-                    var dirInfo = new DirectoryInfo(_path);
-                    return dirInfo.Attributes.HasFlag(FileAttributes.ReparsePoint);
-                }
+                var fileInfo = new FileInfo(_path);
+                if (fileInfo.LinkTarget != null)
+                    return true;
+
+                var dirInfo = new DirectoryInfo(_path);
+                if (dirInfo.LinkTarget != null)
+                    return true;
+
                 return false;
             }
             catch
@@ -329,7 +365,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
             }
         }
     }
-    
+
     /// <summary>
     /// Get file information
     /// </summary>
@@ -348,19 +384,23 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
             return null;
         }
     }
-    
+
     #endregion
-    
+
     #region File Operations
-    
+
     /// <summary>
     /// Open the file pointed to by the path
     /// </summary>
-    public FileStream Open(FileMode mode = FileMode.Open, FileAccess access = FileAccess.Read, FileShare share = FileShare.Read)
+    public FileStream Open(
+        FileMode mode = FileMode.Open,
+        FileAccess access = FileAccess.Read,
+        FileShare share = FileShare.Read
+    )
     {
         return new FileStream(_path, mode, access, share);
     }
-    
+
     /// <summary>
     /// Read the entire file as text
     /// </summary>
@@ -369,7 +409,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
         encoding ??= Encoding.UTF8;
         return File.ReadAllText(_path, encoding);
     }
-    
+
     /// <summary>
     /// Read the entire file as bytes
     /// </summary>
@@ -377,7 +417,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return File.ReadAllBytes(_path);
     }
-    
+
     /// <summary>
     /// Write text to the file
     /// </summary>
@@ -386,7 +426,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
         encoding ??= Encoding.UTF8;
         File.WriteAllText(_path, contents, encoding);
     }
-    
+
     /// <summary>
     /// Write bytes to the file
     /// </summary>
@@ -394,7 +434,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         File.WriteAllBytes(_path, bytes);
     }
-    
+
     /// <summary>
     /// Create an empty file or update the modification time
     /// </summary>
@@ -406,19 +446,14 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
         }
         else
         {
-            // Create parent directories if they don't exist
-            var parent = Parent;
-            if (!parent.Exists)
-                parent.MakeDirectory(createParents: true);
-                
             File.Create(_path).Dispose();
         }
     }
-    
+
     #endregion
-    
+
     #region Directory Operations
-    
+
     /// <summary>
     /// Iterate over directory contents
     /// </summary>
@@ -426,13 +461,13 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         if (!IsDirectory)
             throw new InvalidOperationException("Path is not a directory");
-            
+
         foreach (var entry in Directory.EnumerateFileSystemEntries(_path))
         {
             yield return new SharpPath(entry);
         }
     }
-    
+
     /// <summary>
     /// Glob pattern matching
     /// </summary>
@@ -440,25 +475,33 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         if (!IsDirectory)
             throw new InvalidOperationException("Path is not a directory");
-            
+
         var searchPattern = pattern.Replace('/', Path.DirectorySeparatorChar);
-        
+
         // Handle recursive patterns
         if (pattern.Contains("**"))
         {
-            return Directory.EnumerateFiles(_path, "*", SearchOption.AllDirectories)
+            return Directory
+                .EnumerateFiles(_path, "*", SearchOption.AllDirectories)
                 .Concat(Directory.EnumerateDirectories(_path, "*", SearchOption.AllDirectories))
                 .Where(p => MatchesGlobPattern(p, pattern))
                 .Select(p => new SharpPath(p));
         }
         else
         {
-            return Directory.EnumerateFiles(_path, searchPattern, SearchOption.TopDirectoryOnly)
-                .Concat(Directory.EnumerateDirectories(_path, searchPattern, SearchOption.TopDirectoryOnly))
+            return Directory
+                .EnumerateFiles(_path, searchPattern, SearchOption.TopDirectoryOnly)
+                .Concat(
+                    Directory.EnumerateDirectories(
+                        _path,
+                        searchPattern,
+                        SearchOption.TopDirectoryOnly
+                    )
+                )
                 .Select(p => new SharpPath(p));
         }
     }
-    
+
     /// <summary>
     /// Recursive glob pattern matching
     /// </summary>
@@ -466,29 +509,36 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return Glob("**/" + pattern);
     }
-    
+
     /// <summary>
     /// Create directory
     /// </summary>
     public void MakeDirectory(bool createParents = false, bool existOk = false)
     {
-        try
+        if (Directory.Exists(_path))
         {
-            if (createParents)
+            if (!existOk)
+                throw new IOException($"Directory '{_path}' already exists");
+            return;
+        }
+
+        if (!createParents)
+        {
+            var parent = Parent;
+            if (
+                parent != null
+                && !string.IsNullOrEmpty(parent._path)
+                && parent._path != _path
+                && !parent.Exists
+            )
             {
-                Directory.CreateDirectory(_path);
-            }
-            else
-            {
-                Directory.CreateDirectory(_path);
+                throw new IOException($"Parent directory '{parent}' does not exist");
             }
         }
-        catch (IOException) when (existOk && IsDirectory)
-        {
-            // Directory already exists and existOk is true
-        }
+
+        Directory.CreateDirectory(_path);
     }
-    
+
     /// <summary>
     /// Remove directory (must be empty)
     /// </summary>
@@ -496,18 +546,18 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         Directory.Delete(_path, false);
     }
-    
+
     #endregion
-    
+
     #region File System Operations
-    
+
     /// <summary>
     /// Rename or move this file/directory
     /// </summary>
     public SharpPath Rename(string newPath)
     {
         var destination = new SharpPath(newPath);
-        
+
         if (IsFile)
         {
             File.Move(_path, destination._path);
@@ -520,17 +570,17 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
         {
             throw new FileNotFoundException($"Path not found: {_path}");
         }
-        
+
         return destination;
     }
-    
+
     /// <summary>
     /// Replace this file/directory (overwrite if exists)
     /// </summary>
     public SharpPath Replace(string newPath)
     {
         var destination = new SharpPath(newPath);
-        
+
         if (IsFile)
         {
             File.Move(_path, destination._path, overwrite: true);
@@ -545,10 +595,10 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
         {
             throw new FileNotFoundException($"Path not found: {_path}");
         }
-        
+
         return destination;
     }
-    
+
     /// <summary>
     /// Remove this file or symbolic link
     /// </summary>
@@ -570,7 +620,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
             // Ignore if missingOk is true
         }
     }
-    
+
     /// <summary>
     /// Create a symbolic link pointing to target
     /// </summary>
@@ -594,35 +644,50 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
             File.CreateSymbolicLink(_path, target);
         }
     }
-    
+
     #endregion
-    
+
     #region Static Methods
-    
+
     /// <summary>
     /// Return the current working directory
     /// </summary>
     public static SharpPath CurrentDirectory => new SharpPath(Directory.GetCurrentDirectory());
-    
+
     /// <summary>
     /// Return the user's home directory
     /// </summary>
-    public static SharpPath Home => new SharpPath(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
-    
+    public static SharpPath Home =>
+        new SharpPath(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+
     #endregion
-    
+
     #region Helper Methods
-    
+
     private bool MatchesGlobPattern(string path, string pattern)
     {
-        // Simple glob pattern matching implementation
-        // This is a basic implementation and could be enhanced
+        var relativePath = Path.GetRelativePath(_path, path);
+
+        // Normalize separators
+        relativePath = relativePath.Replace(
+            Path.AltDirectorySeparatorChar,
+            Path.DirectorySeparatorChar
+        );
+        pattern = pattern.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+
+        // Handle **/ prefix matching nothing
+        string doubleStarPrefix = "**" + Path.DirectorySeparatorChar;
+        if (pattern.StartsWith(doubleStarPrefix))
+        {
+            string patternWithoutPrefix = pattern.Substring(doubleStarPrefix.Length);
+            if (MatchesWildcard(relativePath, patternWithoutPrefix))
+                return true;
+        }
+
         pattern = pattern.Replace("**", "*");
-        var fileName = Path.GetFileName(path);
-        var patternName = Path.GetFileName(pattern);
-        return MatchesWildcard(fileName, patternName);
+        return MatchesWildcard(relativePath, pattern);
     }
-    
+
     private bool MatchesWildcard(string text, string pattern)
     {
         // Simple wildcard matching for * and ?
@@ -630,7 +695,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
         int patternIndex = 0;
         int textLength = text.Length;
         int patternLength = pattern.Length;
-        
+
         while (textIndex < textLength && patternIndex < patternLength)
         {
             if (pattern[patternIndex] == '*')
@@ -638,7 +703,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
                 patternIndex++;
                 if (patternIndex == patternLength)
                     return true;
-                    
+
                 while (textIndex < textLength)
                 {
                     if (MatchesWildcard(text.Substring(textIndex), pattern.Substring(patternIndex)))
@@ -657,40 +722,42 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
                 return false;
             }
         }
-        
+
         // Handle remaining asterisks in pattern
         while (patternIndex < patternLength && pattern[patternIndex] == '*')
             patternIndex++;
-            
+
         return textIndex == textLength && patternIndex == patternLength;
     }
-    
+
     #endregion
-    
+
     #region Helper Methods
-    
+
     private static string NormalizePath(string path)
     {
-        if (string.IsNullOrEmpty(path)) return ".";
-        
+        if (string.IsNullOrEmpty(path))
+            return ".";
+
         // Handle relative paths
-        if (path == "." || path == "..") return path;
-        
+        if (path == "." || path == "..")
+            return path;
+
         // Normalize separators and remove redundant separators
         path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-        
+
         return path;
     }
-    
+
     #endregion
-    
+
     #region Object Overrides
-    
+
     /// <summary>
     /// Returns the string representation of the path
     /// </summary>
     public override string ToString() => _path;
-    
+
     /// <summary>
     /// Determines whether the specified object is equal to the current path
     /// </summary>
@@ -698,48 +765,50 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return obj is SharpPath other && Equals(other);
     }
-    
+
     /// <summary>
     /// Determines whether the specified path is equal to the current path
     /// </summary>
     public bool Equals(SharpPath? other)
     {
-        if (other is null) return false;
-        
+        if (other is null)
+            return false;
+
         // Use case-insensitive comparison on Windows
-        var comparison = OperatingSystem.IsWindows() 
-            ? StringComparison.OrdinalIgnoreCase 
+        var comparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
             : StringComparison.Ordinal;
-            
+
         return string.Equals(_path, other._path, comparison);
     }
-    
+
     /// <summary>
     /// Returns the hash code for the current path
     /// </summary>
     public override int GetHashCode()
     {
-        var comparison = OperatingSystem.IsWindows() 
-            ? StringComparison.OrdinalIgnoreCase 
+        var comparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
             : StringComparison.Ordinal;
-            
+
         return _path.GetHashCode(comparison);
     }
-    
+
     /// <summary>
     /// Compares the current path with another path
     /// </summary>
     public int CompareTo(SharpPath? other)
     {
-        if (other is null) return 1;
-        
-        var comparison = OperatingSystem.IsWindows() 
-            ? StringComparison.OrdinalIgnoreCase 
+        if (other is null)
+            return 1;
+
+        var comparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
             : StringComparison.Ordinal;
-            
+
         return string.Compare(_path, other._path, comparison);
     }
-    
+
     /// <summary>
     /// Determines whether two paths are equal
     /// </summary>
@@ -747,7 +816,7 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return EqualityComparer<SharpPath>.Default.Equals(left, right);
     }
-    
+
     /// <summary>
     /// Determines whether two paths are not equal
     /// </summary>
@@ -755,6 +824,6 @@ public class SharpPath : IEquatable<SharpPath>, IComparable<SharpPath>
     {
         return !(left == right);
     }
-    
+
     #endregion
 }

@@ -1,3 +1,6 @@
+using System.Text;
+using Xunit.Abstractions;
+
 namespace PathLib.Sharp.Tests;
 
 public class SharpPathTests : IDisposable

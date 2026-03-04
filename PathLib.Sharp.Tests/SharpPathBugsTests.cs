@@ -82,14 +82,14 @@ public class SharpPathBugsTests : IDisposable
 
         var matches = root.Glob("**/src/*.cs").ToList();
 
-        Assert.True(matches.Count > 0, "Should find at least one file");
+        matches.Should().NotBeEmpty("because we should find at least one file");
 
         // Should NOT find test/match.cs
-        Assert.DoesNotContain(matches, p => p.Parent.Name == "test");
+        matches.Should().NotContain(p => p.Parent.Name == "test");
 
         // Should find src/match.cs
-        Assert.Contains(matches, p => p.Parent.Name == "src");
-        Assert.Single(matches);
+        matches.Should().Contain(p => p.Parent.Name == "src");
+        matches.Should().ContainSingle();
     }
 
     /// <summary>
@@ -102,7 +102,8 @@ public class SharpPathBugsTests : IDisposable
         var path = new SharpPath(_tempDirectory) / "missing_parent" / "target_dir";
 
         // Should throw because missing_parent does not exist and createParents is false
-        Assert.ThrowsAny<IOException>(() => path.MakeDirectory(createParents: false));
+        Action makedirAct = () => path.MakeDirectory(createParents: false);
+        makedirAct.Should().Throw<IOException>();
     }
 
     /// <summary>
@@ -116,7 +117,8 @@ public class SharpPathBugsTests : IDisposable
         path.MakeDirectory(); // Create it first
 
         // Should throw because directory exists and existOk is false
-        Assert.Throws<IOException>(() => path.MakeDirectory(existOk: false));
+        Action existAct = () => path.MakeDirectory(existOk: false);
+        existAct.Should().ThrowExactly<IOException>();
     }
 
     /// <summary>
@@ -142,8 +144,8 @@ public class SharpPathBugsTests : IDisposable
             return;
         }
 
-        Assert.True(linkPath.IsSymlink, "IsSymlink should be true for broken symbolic link");
-        Assert.False(linkPath.Exists, "Exists should be false for broken symbolic link");
+        linkPath.IsSymlink.Should().BeTrue("because IsSymlink should be true for broken symbolic link");
+        linkPath.Exists.Should().BeFalse("because Exists should be false for broken symbolic link");
     }
 
     /// <summary>
@@ -155,6 +157,7 @@ public class SharpPathBugsTests : IDisposable
     {
         var path = new SharpPath(_tempDirectory) / "missing_dir_for_touch" / "file.txt";
 
-        Assert.ThrowsAny<IOException>(() => path.Touch());
+        Action touchAct = () => path.Touch();
+        touchAct.Should().Throw<IOException>();
     }
 }

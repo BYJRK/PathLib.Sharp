@@ -65,14 +65,14 @@ public class SharpPathTests : IDisposable
     public void Constructor_EmptyPath_ReturnsCurrentDirectory()
     {
         var path = new SharpPath();
-        Assert.Equal(".", path.ToString());
+        path.ToString().Should().Be(".");
     }
 
     [Fact]
     public void Constructor_NullPath_ReturnsCurrentDirectory()
     {
         var path = new SharpPath((string[])null!);
-        Assert.Equal(".", path.ToString());
+        path.ToString().Should().Be(".");
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public class SharpPathTests : IDisposable
     {
         var path = new SharpPath("folder1", "folder2", "file.txt");
         var expected = Path.Combine("folder1", "folder2", "file.txt");
-        Assert.Equal(expected, path.ToString());
+        path.ToString().Should().Be(expected);
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public class SharpPathTests : IDisposable
     {
         var original = new SharpPath("test", "path");
         var copy = new SharpPath(original);
-        Assert.Equal(original.ToString(), copy.ToString());
+        copy.ToString().Should().Be(original.ToString());
     }
 
     #endregion
@@ -101,9 +101,9 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath("folder", "subfolder", "file.txt");
         var parts = path.Parts;
 
-        Assert.Contains("folder", parts);
-        Assert.Contains("subfolder", parts);
-        Assert.Contains("file.txt", parts);
+        parts.Should().Contain("folder");
+        parts.Should().Contain("subfolder");
+        parts.Should().Contain("file.txt");
     }
 
     [Fact]
@@ -112,43 +112,43 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath(".");
         var parts = path.Parts;
 
-        Assert.Single(parts);
-        Assert.Equal(".", parts[0]);
+        parts.Should().ContainSingle();
+        parts[0].Should().Be(".");
     }
 
     [Fact]
     public void Name_FileWithExtension_ReturnsCorrectName()
     {
         var path = new SharpPath("folder", "file.txt");
-        Assert.Equal("file.txt", path.Name);
+        path.Name.Should().Be("file.txt");
     }
 
     [Fact]
     public void Name_DirectoryPath_ReturnsDirectoryName()
     {
         var path = new SharpPath("folder", "subfolder");
-        Assert.Equal("subfolder", path.Name);
+        path.Name.Should().Be("subfolder");
     }
 
     [Fact]
     public void Stem_FileWithExtension_ReturnsNameWithoutExtension()
     {
         var path = new SharpPath("document.pdf");
-        Assert.Equal("document", path.Stem);
+        path.Stem.Should().Be("document");
     }
 
     [Fact]
     public void Stem_FileWithMultipleExtensions_ReturnsCorrectStem()
     {
         var path = new SharpPath("archive.tar.gz");
-        Assert.Equal("archive.tar", path.Stem);
+        path.Stem.Should().Be("archive.tar");
     }
 
     [Fact]
     public void Suffix_FileWithExtension_ReturnsExtension()
     {
         var path = new SharpPath("document.pdf");
-        Assert.Equal(".pdf", path.Suffix);
+        path.Suffix.Should().Be(".pdf");
     }
 
     [Fact]
@@ -157,8 +157,8 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath("archive.tar.gz");
         var suffixes = path.Suffixes;
 
-        Assert.Contains(".tar", suffixes);
-        Assert.Contains(".gz", suffixes);
+        suffixes.Should().Contain(".tar");
+        suffixes.Should().Contain(".gz");
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath("folder", "file.txt");
         var parent = path.Parent;
 
-        Assert.Equal("folder", parent.ToString());
+        parent.ToString().Should().Be("folder");
     }
 
     [Fact]
@@ -176,8 +176,8 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath("a", "b", "c", "file.txt");
         var parents = path.Parents.ToList();
 
-        Assert.Contains(parents, p => p.ToString().EndsWith("c"));
-        Assert.Contains(parents, p => p.ToString().EndsWith(Path.Combine("b", "c")));
+        parents.Should().Contain(p => p.ToString().EndsWith("c"));
+        parents.Should().Contain(p => p.ToString().EndsWith(Path.Combine("b", "c")));
     }
 
     [Theory]
@@ -188,7 +188,7 @@ public class SharpPathTests : IDisposable
         if (OperatingSystem.IsWindows() || !pathStr.StartsWith("C:"))
         {
             var path = new SharpPath(pathStr);
-            Assert.Equal(expectedDrive, path.Drive);
+            path.Drive.Should().Be(expectedDrive);
         }
     }
 
@@ -203,7 +203,7 @@ public class SharpPathTests : IDisposable
         var combined = basePath / "file.txt";
 
         var expected = Path.Combine("folder", "file.txt");
-        Assert.Equal(expected, combined.ToString());
+        combined.ToString().Should().Be(expected);
     }
 
     [Fact]
@@ -214,7 +214,7 @@ public class SharpPathTests : IDisposable
         var combined = basePath / subPath;
 
         var expected = Path.Combine("folder", Path.Combine("subfolder", "file.txt"));
-        Assert.Equal(expected, combined.ToString());
+        combined.ToString().Should().Be(expected);
     }
 
     [Fact]
@@ -222,7 +222,7 @@ public class SharpPathTests : IDisposable
     {
         SharpPath path = "test/path";
         var expected = Path.Combine("test", "path");
-        Assert.Equal(expected, path.ToString());
+        path.ToString().Should().Be(expected);
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public class SharpPathTests : IDisposable
     {
         var path = new SharpPath("test", "path");
         string pathStr = path;
-        Assert.Equal(path.ToString(), pathStr);
+        pathStr.Should().Be(path.ToString());
     }
 
     #endregion
@@ -244,7 +244,7 @@ public class SharpPathTests : IDisposable
         var result = path.JoinPath("folder1", "folder2", "file.txt");
 
         var expected = Path.Combine("base", "folder1", "folder2", "file.txt");
-        Assert.Equal(expected, result.ToString());
+        result.ToString().Should().Be(expected);
     }
 
     [Fact]
@@ -254,14 +254,14 @@ public class SharpPathTests : IDisposable
             ? new SharpPath("C:", "folder", "file.txt")
             : new SharpPath("/", "home", "user", "file.txt");
 
-        Assert.True(absolutePath.IsAbsolute);
+        absolutePath.IsAbsolute.Should().BeTrue();
     }
 
     [Fact]
     public void IsAbsolute_RelativePath_ReturnsFalse()
     {
         var relativePath = new SharpPath("folder", "file.txt");
-        Assert.False(relativePath.IsAbsolute);
+        relativePath.IsAbsolute.Should().BeFalse();
     }
 
     [Fact]
@@ -270,8 +270,8 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath("folder", "oldfile.txt");
         var newPath = path.WithName("newfile.txt");
 
-        Assert.Equal("newfile.txt", newPath.Name);
-        Assert.Equal(path.Parent.ToString(), newPath.Parent.ToString());
+        newPath.Name.Should().Be("newfile.txt");
+        newPath.Parent.ToString().Should().Be(path.Parent.ToString());
     }
 
     [Fact]
@@ -280,7 +280,7 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath("document.pdf");
         var newPath = path.WithStem("report");
 
-        Assert.Equal("report.pdf", newPath.Name);
+        newPath.Name.Should().Be("report.pdf");
     }
 
     [Fact]
@@ -289,7 +289,7 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath("document.pdf");
         var newPath = path.WithSuffix(".txt");
 
-        Assert.Equal("document.txt", newPath.Name);
+        newPath.Name.Should().Be("document.txt");
     }
 
     #endregion
@@ -303,14 +303,14 @@ public class SharpPathTests : IDisposable
         File.WriteAllText(testFile, "test content");
 
         var path = new SharpPath(testFile);
-        Assert.True(path.Exists);
+        path.Exists.Should().BeTrue();
     }
 
     [Fact]
     public void Exists_NonExistingFile_ReturnsFalse()
     {
         var path = new SharpPath(GetTempPath("nonexistent.txt"));
-        Assert.False(path.Exists);
+        path.Exists.Should().BeFalse();
     }
 
     [Fact]
@@ -320,8 +320,8 @@ public class SharpPathTests : IDisposable
         File.WriteAllText(testFile, "test content");
 
         var path = new SharpPath(testFile);
-        Assert.True(path.IsFile);
-        Assert.False(path.IsDirectory);
+        path.IsFile.Should().BeTrue();
+        path.IsDirectory.Should().BeFalse();
     }
 
     [Fact]
@@ -331,8 +331,8 @@ public class SharpPathTests : IDisposable
         Directory.CreateDirectory(testDir);
 
         var path = new SharpPath(testDir);
-        Assert.True(path.IsDirectory);
-        Assert.False(path.IsFile);
+        path.IsDirectory.Should().BeTrue();
+        path.IsFile.Should().BeFalse();
     }
 
     [Fact]
@@ -344,8 +344,8 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath(testFile);
         var stat = path.Stat();
 
-        Assert.NotNull(stat);
-        Assert.IsType<FileInfo>(stat);
+        stat.Should().NotBeNull();
+        stat.Should().BeOfType<FileInfo>();
     }
 
     #endregion
@@ -362,7 +362,7 @@ public class SharpPathTests : IDisposable
         path.WriteText(content);
         var readContent = path.ReadText();
 
-        Assert.Equal(content, readContent);
+        readContent.Should().Be(content);
     }
 
     [Fact]
@@ -375,7 +375,7 @@ public class SharpPathTests : IDisposable
         path.WriteBytes(data);
         var readData = path.ReadBytes();
 
-        Assert.Equal(data, readData);
+        readData.Should().Equal(data);
     }
 
     [Fact]
@@ -384,10 +384,10 @@ public class SharpPathTests : IDisposable
         var testFile = GetTempPath("touchfile.txt");
         var path = new SharpPath(testFile);
 
-        Assert.False(path.Exists);
+        path.Exists.Should().BeFalse();
         path.Touch();
-        Assert.True(path.Exists);
-        Assert.True(path.IsFile);
+        path.Exists.Should().BeTrue();
+        path.IsFile.Should().BeTrue();
     }
 
     [Fact]
@@ -403,7 +403,7 @@ public class SharpPathTests : IDisposable
         path.Touch();
         var newTime = File.GetLastWriteTime(testFile);
 
-        Assert.True(newTime > originalTime);
+        newTime.Should().BeAfter(originalTime);
     }
 
     [Fact]
@@ -414,8 +414,8 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath(testFile);
 
         using var stream = path.Open();
-        Assert.NotNull(stream);
-        Assert.True(stream.CanRead);
+        stream.Should().NotBeNull();
+        stream.CanRead.Should().BeTrue();
     }
 
     #endregion
@@ -428,10 +428,10 @@ public class SharpPathTests : IDisposable
         var testDir = GetTempPath("newdirectory");
         var path = new SharpPath(testDir);
 
-        Assert.False(path.Exists);
+        path.Exists.Should().BeFalse();
         path.MakeDirectory();
-        Assert.True(path.Exists);
-        Assert.True(path.IsDirectory);
+        path.Exists.Should().BeTrue();
+        path.IsDirectory.Should().BeTrue();
     }
 
     [Fact]
@@ -441,8 +441,8 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath(testDir);
 
         path.MakeDirectory(createParents: true);
-        Assert.True(path.Exists);
-        Assert.True(path.IsDirectory);
+        path.Exists.Should().BeTrue();
+        path.IsDirectory.Should().BeTrue();
     }
 
     [Fact]
@@ -459,10 +459,10 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath(testDir);
         var entries = path.IterateDirectory().ToList();
 
-        Assert.Equal(3, entries.Count);
-        Assert.Contains(entries, e => e.Name == "file1.txt");
-        Assert.Contains(entries, e => e.Name == "file2.txt");
-        Assert.Contains(entries, e => e.Name == "subdir");
+        entries.Should().HaveCount(3);
+        entries.Should().Contain(e => e.Name == "file1.txt");
+        entries.Should().Contain(e => e.Name == "file2.txt");
+        entries.Should().Contain(e => e.Name == "subdir");
     }
 
     [Fact]
@@ -479,8 +479,8 @@ public class SharpPathTests : IDisposable
         var path = new SharpPath(testDir);
         var matches = path.Glob("*.txt").ToList();
 
-        Assert.Equal(2, matches.Count);
-        Assert.All(matches, m => Assert.EndsWith(".txt", m.Name));
+        matches.Should().HaveCount(2);
+        matches.Should().AllSatisfy(m => m.Name.Should().EndWith(".txt"));
     }
 
     [Fact]
@@ -490,9 +490,9 @@ public class SharpPathTests : IDisposable
         Directory.CreateDirectory(testDir);
         var path = new SharpPath(testDir);
 
-        Assert.True(path.Exists);
+        path.Exists.Should().BeTrue();
         path.RemoveDirectory();
-        Assert.False(path.Exists);
+        path.Exists.Should().BeFalse();
     }
 
     #endregion
@@ -510,9 +510,9 @@ public class SharpPathTests : IDisposable
 
         var result = sourcePath.Rename(targetFile);
 
-        Assert.False(File.Exists(sourceFile));
-        Assert.True(File.Exists(targetFile));
-        Assert.Equal(targetFile, result.ToString());
+        File.Exists(sourceFile).Should().BeFalse();
+        File.Exists(targetFile).Should().BeTrue();
+        result.ToString().Should().Be(targetFile);
     }
 
     [Fact]
@@ -527,9 +527,9 @@ public class SharpPathTests : IDisposable
         var sourcePath = new SharpPath(sourceFile);
         var result = sourcePath.Replace(targetFile);
 
-        Assert.False(File.Exists(sourceFile));
-        Assert.True(File.Exists(targetFile));
-        Assert.Equal("new content", File.ReadAllText(targetFile));
+        File.Exists(sourceFile).Should().BeFalse();
+        File.Exists(targetFile).Should().BeTrue();
+        File.ReadAllText(targetFile).Should().Be("new content");
     }
 
     [Fact]
@@ -539,9 +539,9 @@ public class SharpPathTests : IDisposable
         File.WriteAllText(testFile, "content");
         var path = new SharpPath(testFile);
 
-        Assert.True(path.Exists);
+        path.Exists.Should().BeTrue();
         path.Unlink();
-        Assert.False(path.Exists);
+        path.Exists.Should().BeFalse();
     }
 
     [Fact]
@@ -562,10 +562,10 @@ public class SharpPathTests : IDisposable
     {
         var currentDir = SharpPath.CurrentDirectory;
 
-        Assert.NotNull(currentDir);
-        Assert.True(currentDir.Exists);
-        Assert.True(currentDir.IsDirectory);
-        Assert.True(currentDir.IsAbsolute);
+        currentDir.Should().NotBeNull();
+        currentDir.Exists.Should().BeTrue();
+        currentDir.IsDirectory.Should().BeTrue();
+        currentDir.IsAbsolute.Should().BeTrue();
     }
 
     [Fact]
@@ -573,8 +573,8 @@ public class SharpPathTests : IDisposable
     {
         var home = SharpPath.Home;
 
-        Assert.NotNull(home);
-        Assert.True(home.IsAbsolute);
+        home.Should().NotBeNull();
+        home.IsAbsolute.Should().BeTrue();
         // Note: Home directory might not always exist in all test environments
     }
 
@@ -588,9 +588,9 @@ public class SharpPathTests : IDisposable
         var path1 = new SharpPath("folder", "file.txt");
         var path2 = new SharpPath("folder", "file.txt");
 
-        Assert.True(path1.Equals(path2));
-        Assert.True(path1 == path2);
-        Assert.False(path1 != path2);
+        path1.Equals(path2).Should().BeTrue();
+        (path1 == path2).Should().BeTrue();
+        (path1 != path2).Should().BeFalse();
     }
 
     [Fact]
@@ -599,9 +599,9 @@ public class SharpPathTests : IDisposable
         var path1 = new SharpPath("folder1", "file.txt");
         var path2 = new SharpPath("folder2", "file.txt");
 
-        Assert.False(path1.Equals(path2));
-        Assert.False(path1 == path2);
-        Assert.True(path1 != path2);
+        path1.Equals(path2).Should().BeFalse();
+        (path1 == path2).Should().BeFalse();
+        (path1 != path2).Should().BeTrue();
     }
 
     [Fact]
@@ -610,7 +610,7 @@ public class SharpPathTests : IDisposable
         var path1 = new SharpPath("folder", "file.txt");
         var path2 = new SharpPath("folder", "file.txt");
 
-        Assert.Equal(path1.GetHashCode(), path2.GetHashCode());
+        path1.GetHashCode().Should().Be(path2.GetHashCode());
     }
 
     [Fact]
@@ -619,9 +619,9 @@ public class SharpPathTests : IDisposable
         var path1 = new SharpPath("a.txt");
         var path2 = new SharpPath("b.txt");
 
-        Assert.True(path1.CompareTo(path2) < 0);
-        Assert.True(path2.CompareTo(path1) > 0);
-        Assert.Equal(0, path1.CompareTo(path1));
+        path1.CompareTo(path2).Should().BeNegative();
+        path2.CompareTo(path1).Should().BePositive();
+        path1.CompareTo(path1).Should().Be(0);
     }
 
     #endregion
@@ -651,9 +651,9 @@ public class SharpPathTests : IDisposable
         var matches = path.Glob(pattern).ToList();
 
         if (expected)
-            Assert.Single(matches);
+            matches.Should().ContainSingle();
         else
-            Assert.Empty(matches);
+            matches.Should().BeEmpty();
     }
 
     #endregion
@@ -666,7 +666,8 @@ public class SharpPathTests : IDisposable
         // For paths without a name component (like "." or root paths)
         var path = new SharpPath(OperatingSystem.IsWindows() ? "C:\\" : "/");
 
-        Assert.Throws<InvalidOperationException>(() => path.WithName("newname"));
+        Action act = () => path.WithName("newname");
+        act.Should().Throw<InvalidOperationException>();
     }
 
     [Fact]
@@ -676,7 +677,8 @@ public class SharpPathTests : IDisposable
         File.WriteAllText(testFile, "content");
         var path = new SharpPath(testFile);
 
-        Assert.Throws<InvalidOperationException>(() => path.IterateDirectory().ToList());
+        Action act = () => path.IterateDirectory().ToList();
+        act.Should().Throw<InvalidOperationException>();
     }
 
     [Fact]
@@ -686,7 +688,8 @@ public class SharpPathTests : IDisposable
         File.WriteAllText(testFile, "content");
         var path = new SharpPath(testFile);
 
-        Assert.Throws<InvalidOperationException>(() => path.Glob("*").ToList());
+        Action act = () => path.Glob("*").ToList();
+        act.Should().Throw<InvalidOperationException>();
     }
 
     [Fact]
@@ -694,7 +697,8 @@ public class SharpPathTests : IDisposable
     {
         var path = new SharpPath(GetTempPath("nonexistent.txt"));
 
-        Assert.Throws<FileNotFoundException>(() => path.ReadText());
+        Action act = () => path.ReadText();
+        act.Should().Throw<FileNotFoundException>();
     }
 
     [Fact]
@@ -702,7 +706,8 @@ public class SharpPathTests : IDisposable
     {
         var path = new SharpPath(GetTempPath("nonexistent.txt"));
 
-        Assert.Throws<FileNotFoundException>(() => path.Unlink(missingOk: false));
+        Action act = () => path.Unlink(missingOk: false);
+        act.Should().Throw<FileNotFoundException>();
     }
 
     #endregion

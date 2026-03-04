@@ -9,7 +9,7 @@
         
         <!-- NuGet Package Properties -->
         <PackageId>CodeWine.PathLib.Sharp</PackageId>
-        <Version>1.0.0-preview</Version>
+        <Version>1.0.1</Version>
         <Authors>CodeWine</Authors>
         <Company>CodeWine</Company>
         <Description>A C# implementation of Python's pathlib functionality, providing object-oriented filesystem path operations.</Description>
